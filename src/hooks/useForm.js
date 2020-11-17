@@ -19,8 +19,8 @@ export const useForm = (initialState = {}, errors = {}) => {
     setDisableButton(disableButton);
   };
 
-  const reset = () => {
-    setFormValues(initialState);
+  const reset = (newState = initialState) => {
+    setFormValues(newState);
   };
 
   useEffect(() => {

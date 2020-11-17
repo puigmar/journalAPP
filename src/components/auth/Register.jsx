@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import validator from "validator";
+import { startRegister } from "../../actions/auth.actions";
 import { setError, unsetError } from "../../actions/ui.actions";
 import { useForm } from "../../hooks/useForm";
 
@@ -22,61 +23,48 @@ export const Register = () => {
     e.preventDefault();
     if (isFormValid()) {
       reset();
-      console.log(formValues);
+      dispatch(startRegister(email, password, name));
     }
   };
 
   const existError = (field) => msgError[field];
 
+  const errors = {
+    name: {
+      validation: name.trim().length === 0,
+      error: "Name is required",
+    },
+    email: {
+      validation: email.trim().length === 0 || !validator.isEmail(email),
+      error: "Email in not valid",
+    },
+    password: {
+      validation: password.length < 6,
+      error: "Password should be at least 6 characthers",
+    },
+    confirmPassword: {
+      validation: confirmPassword !== password || confirmPassword.length < 6,
+      error: "Password and Confirmation have to match",
+    },
+  };
+
   const isFormValid = (field) => {
-    switch (field) {
-      case "name":
-        if (name.trim().length === 0) {
-          dispatch(setError("name", "Name is required"));
-          return false;
-        } else {
-          dispatch(unsetError("name"));
-        }
-        break;
-      case "email":
-        if (email.trim().length === 0 || !validator.isEmail(email)) {
-          dispatch(setError("email", "Email in not valid"));
-          return false;
-        } else {
-          dispatch(unsetError("email"));
-        }
-        break;
-      case "password":
-        if (password.length < 6) {
-          dispatch(
-            setError("password", "Password should be at least 6 characthers")
-          );
-          return false;
-        } else {
-          dispatch(unsetError("password"));
-        }
-        break;
-      case "confirmPassword":
-        if (confirmPassword !== password || confirmPassword.length < 6) {
-          dispatch(
-            setError(
-              "confirmPassword",
-              "Password and Confirmation have to match"
-            )
-          );
-          return false;
-        } else {
-          dispatch(unsetError("confirmPassword"));
-        }
-        break;
-      default:
-        dispatch(unsetError());
-        return true;
+    if (field) {
+      if (errors[field].validation) {
+        dispatch(setError(`${field}`, errors[field].error));
+      } else {
+        dispatch(unsetError(`${field}`));
+      }
+    }
+
+    if (!field && Object.keys(msgError).length === 0) {
+      dispatch(unsetError());
+      return true;
     }
   };
 
-  const handleFieldError = (field, errors = []) => {
-    const labelErrors = Object.keys(errors);
+  const handleFieldError = (field, msgErrors = []) => {
+    const labelErrors = Object.keys(msgErrors);
     const existError = labelErrors.find((error) => error === field);
     return existError ? "isError" : "";
   };

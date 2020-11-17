@@ -1,27 +1,23 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Link } from "react-router-dom";
-import { login } from "../../actions/auth.actions";
+import { startCustomLogin, startGoogleLogin } from "../../actions/auth.actions";
 import { useForm } from "../../hooks/useForm";
-import {
-  startLoginEmailPassword,
-  startGoogleLogin,
-} from "../../actions/auth.actions";
 
 export const Login = () => {
   const dispatch = useDispatch();
-
+  const { loading } = useSelector((state) => state.ui);
   const [formValues, handleInputChanges] = useForm({
-    email: "ferran.puigmar@gmail.com",
-    password: "123456",
+    email: "",
+    password: "",
   });
 
   const { email, password } = formValues;
 
   const handleLogin = (e) => {
     e.preventDefault();
-    dispatch(login(123456, "Ferran"));
+    dispatch(startCustomLogin(email, password));
   };
 
   const handleGoogleLogin = () => {
@@ -51,10 +47,12 @@ export const Login = () => {
             className='auth__input'
             autoComplete='false'
             value={password}
-            name='password'
             onChange={handleInputChanges}
           />
-          <button type='submit' className='btn btn-primary mt-1'>
+          <button
+            disabled={loading}
+            type='submit'
+            className='btn btn-primary mt-1'>
             Login
           </button>
         </div>

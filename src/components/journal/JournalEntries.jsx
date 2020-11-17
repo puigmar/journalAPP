@@ -1,12 +1,25 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { activeNote } from "../../actions/notes.actions";
 import { JournalEntry } from "./JournalEntry";
 
 export const JournalEntries = () => {
-  const entries = [1, 2, 3, 4, 5, 6, 7, 9, 10];
+  const { notes } = useSelector((state) => state.notes);
+  const dispatch = useDispatch();
+
+  const handleActiveNote = (note) => {
+    console.log(note);
+    dispatch(activeNote(note.id, note));
+  };
+
   return (
     <div className='journal__entries'>
-      {entries.map((value) => (
-        <JournalEntry key={value} />
+      {notes.map((note) => (
+        <JournalEntry
+          key={note.id}
+          {...note}
+          onClick={() => handleActiveNote(note)}
+        />
       ))}
     </div>
   );
