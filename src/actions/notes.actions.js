@@ -1,5 +1,6 @@
 import Swal from "sweetalert2";
 import { db } from "../firebase/firebase-config";
+import { fileUpload } from "../helpers/fileUpload";
 import { loadNotes } from "../helpers/loadNotes";
 import { types } from "../types/types";
 
@@ -60,5 +61,34 @@ export const startSaveNote = (note) => {
 
     dispatch(refreshNote(note.id, note));
     Swal.fire("Saved", note.title, "success");
+  };
+};
+
+export const uploadPicture = (file) => ({
+  type: types.notesFileUrl,
+  payload: file,
+});
+
+export const startUploadPicture = (file) => {
+  return async (dispatch, getState) => {
+    const { active: activeNote } = getState().notes;
+
+    const uid = getState().auth.uid;
+
+    Swal.fire({
+      title: "Uploading...",
+      text: "Pelase wait...",
+      allowOutsideClick: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    const fileUrl = await fileUpload(file);
+
+    Swal.close();
+
+    activeNote.image_url = fileUrl;
+    dispatch(startSaveNote(activeNote));
   };
 };

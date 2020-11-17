@@ -23,10 +23,9 @@ export const NoteScreen = () => {
       ...formValues,
     };
     dispatch(activeNote(formValues.id, newNote));
-    //dispatch(updateNotes(newNote));
   }, [formValues]);
 
-  const { body, title, url } = formValues;
+  const { body, title, image_url } = formValues;
   return (
     <div className='notes__main-content'>
       <NotesAppbar />
@@ -49,9 +48,9 @@ export const NoteScreen = () => {
             onChange={handleInputChange}
             value={body}
           />
-          {url && (
+          {note.image_url && (
             <div className='notes__image'>
-              <img name='url' src={`${url}`} alt='imagen' />
+              <img name='image_url' src={`${note.image_url}`} alt='imagen' />
             </div>
           )}
         </form>

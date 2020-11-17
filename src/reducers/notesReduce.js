@@ -42,6 +42,15 @@ export const notesReducer = (state = initialState, action) => {
           note.id === action.payload.id ? action.payload.note : note
         ),
       };
+
+    case types.notesFileUrl:
+      return {
+        ...state,
+        active: {
+          ...state.active,
+          imageUrl: action.payload,
+        },
+      };
     default:
       return state;
   }
