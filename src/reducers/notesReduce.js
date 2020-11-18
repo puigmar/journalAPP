@@ -51,6 +51,27 @@ export const notesReducer = (state = initialState, action) => {
           imageUrl: action.payload,
         },
       };
+
+    case types.noteDelete:
+      return {
+        ...state,
+        notes: state.notes.filter((note) => note.id !== action.payload),
+        active: null,
+      };
+
+    case types.notesLogoutCleaning:
+      return {
+        ...state,
+        ...initialState,
+      };
+
+    case types.notesAddNew:
+      const newNote = action.payload;
+      return {
+        ...state,
+        notes: [newNote, ...state.notes],
+      };
+
     default:
       return state;
   }
